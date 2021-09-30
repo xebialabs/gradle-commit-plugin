@@ -1,5 +1,6 @@
 plugins {
     `java-gradle-plugin`
+    `java-library`
     `maven-publish`
     kotlin("jvm") version (Versions.kotlin)
 
@@ -54,7 +55,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
     publishing {
         publications {
             afterEvaluate {
-                named<MavenPublication>("mavenJava") {
+                create<MavenPublication>("mavenJava") {
                     from(components["java"])
 
                     groupId = PluginConstants.groupId
