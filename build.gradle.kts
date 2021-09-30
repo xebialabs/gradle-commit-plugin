@@ -24,13 +24,18 @@ idea {
 }
 
 dependencies {
+    implementation(gradleApi())
     implementation(gradleKotlinDsl())
+
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
     implementation("org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}")
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
     withSourcesJar()
     withJavadocJar()
 }
@@ -44,6 +49,8 @@ val releasedVersion = PluginConstants.getVersion()
 project.extra.set("releasedVersion", releasedVersion)
 
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
+    project.logger.lifecycle("Running release for Sonartype")
+
     publishing {
         publications {
             register("mavenJava", MavenPublication::class) {
@@ -118,7 +125,22 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
             }
         }
     }
+
+    signing {
+        sign(publishing.publications["mavenJava"])
+    }
+
+    nexusPublishing {
+        repositories {
+            sonatype {
+                username.set(project.property("sonatypeUsername").toString())
+                password.set(project.property("sonatypePassword").toString())
+            }
+        }
+    }
 } else {
+    project.logger.lifecycle("Running release for Nexus")
+
     publishing {
         publications {
             create<MavenPublication>("myLibrary") {
@@ -137,26 +159,13 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
     }
 }
 
-if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
-    signing {
-        sign(publishing.publications["mavenJava"])
-    }
-
-    nexusPublishing {
-        repositories {
-            sonatype {
-                username.set(project.property("sonatypeUsername").toString())
-                password.set(project.property("sonatypePassword").toString())
-            }
-        }
-    }
-}
-
 tasks {
     register<NebulaRelease>("nebulaRelease")
 
     register("dumpVersion") {
-        file(buildDir).mkdirs()
-        file("$buildDir/version.dump").writeText("version=$releasedVersion")
+        doLast {
+            file(buildDir).mkdirs()
+            file("$buildDir/version.dump").writeText("version=$releasedVersion")
+        }
     }
 }
