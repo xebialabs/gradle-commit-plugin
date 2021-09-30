@@ -23,7 +23,8 @@ dependencies {
 }
 
 group = PluginConstants.groupId
-version = PluginConstants.getVersion()
+val releasedVersion = PluginConstants.getVersion()
+project.extra.set("releasedVersion", releasedVersion)
 
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
     publishing {
