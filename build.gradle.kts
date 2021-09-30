@@ -134,6 +134,10 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 }
 
 tasks {
+    withType(NebulaRelease::class.java) {
+        named("nebulaRelease")
+    }
+
     register("dumpVersion") {
         file(buildDir).mkdirs()
         file("$buildDir/version.dump").writeText("version=$project.version")
