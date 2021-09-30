@@ -1,1 +1,1 @@
-./gradlew clean build -x test publishToMavenLocal
+./gradlew clean build -x test publishToMavenLocal snapshot --stacktrace

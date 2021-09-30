@@ -1,5 +1,4 @@
 plugins {
-    `java-gradle-plugin`
     `java-library`
     `maven-publish`
     kotlin("jvm") version (Versions.kotlin)
@@ -62,7 +61,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 
     publishing {
         publications {
-            register("mavenJava", MavenPublication::class) {
+            register("pluginMaven", MavenPublication::class) {
                 from(components["java"])
 
                 groupId = "com.xebialabs.gradle.plugins"
@@ -121,7 +120,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
     }
 
     signing {
-        sign(publishing.publications["mavenJava"])
+        sign(publishing.publications["pluginMaven"])
     }
 
     nexusPublishing {
@@ -137,7 +136,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 
     publishing {
         publications {
-            create<MavenPublication>("myLibrary") {
+            create<MavenPublication>("pluginMaven") {
                 from(components["java"])
             }
         }
