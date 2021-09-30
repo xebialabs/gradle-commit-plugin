@@ -13,7 +13,6 @@ object PluginVersions {
 object PluginConstants {
     const val artifactId = "gradle-commit"
     const val description = "Gradle plugin which helps to commit & push changes to Git repository"
-    const val displayName = "Gradle Git Commit Plugin"
     const val groupId = "com.xebialabs.gradle.plugins"
     const val repositoryScm = "https://github.com/xebialabs/gradle-commit-plugin"
     const val repositoryLicense = "${repositoryScm}/blob/master/LICENSE"

@@ -1,12 +1,11 @@
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.get
 
 abstract class NebulaRelease : DefaultTask() {
 
     @TaskAction
     fun doRelease() {
-        val version = project.extensions.get("releasedVersion")
+        val version = project.version
         project.logger.lifecycle("Releasing version is: $version")
 
         project.exec {

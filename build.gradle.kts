@@ -7,6 +7,7 @@ plugins {
     id("idea")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
     id("org.jlleitschuh.gradle.ktlint") version (PluginVersions.ktlint)
+    id("nebula.release") version "15.3.1"
     id("signing")
 }
 
@@ -134,9 +135,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 }
 
 tasks {
-    withType(NebulaRelease::class.java) {
-        named("nebulaRelease")
-    }
+    register<NebulaRelease>("nebulaRelease")
 
     register("dumpVersion") {
         file(buildDir).mkdirs()
