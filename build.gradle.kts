@@ -132,3 +132,10 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
         }
     }
 }
+
+tasks {
+    register("dumpVersion") {
+        file(buildDir).mkdirs()
+        file("$buildDir/version.dump").writeText("version=$project.version")
+    }
+}
