@@ -54,44 +54,42 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 
     publishing {
         publications {
-            afterEvaluate {
-                create<MavenPublication>("mavenJava") {
-                    from(components["java"])
+            create<MavenPublication>("commitPlugin") {
+                from(components["java"])
 
-                    groupId = PluginConstants.groupId
-                    artifactId = PluginConstants.artifactId
-                    version = releasedVersion
+                groupId = PluginConstants.groupId
+                artifactId = PluginConstants.artifactId
+                version = releasedVersion
 
-                    pom {
-                        name.set("Integration Server Gradle Plugin")
-                        description.set("The easy way to get custom setup for Deploy up and running")
-                        url.set(PluginConstants.repositoryUrl)
-                        licenses {
-                            license {
-                                name.set("GPLv2 with Digital.ai FLOSS License Exception")
-                                url.set(PluginConstants.repositoryLicense)
-                            }
-                        }
-
-                        scm {
-                            url.set(PluginConstants.repositoryScm)
-                        }
-
-                        developers {
-                            developer {
-                                id.set("bnechyporenko")
-                                name.set("Bogdan Nechyporenko")
-                                email.set("bnechyporenko@digital.ai")
-                            }
+                pom {
+                    name.set("Integration Server Gradle Plugin")
+                    description.set("The easy way to get custom setup for Deploy up and running")
+                    url.set(PluginConstants.repositoryUrl)
+                    licenses {
+                        license {
+                            name.set("GPLv2 with Digital.ai FLOSS License Exception")
+                            url.set(PluginConstants.repositoryLicense)
                         }
                     }
-                    versionMapping {
-                        usage("java-api") {
-                            fromResolutionOf("runtimeClasspath")
+
+                    scm {
+                        url.set(PluginConstants.repositoryScm)
+                    }
+
+                    developers {
+                        developer {
+                            id.set("bnechyporenko")
+                            name.set("Bogdan Nechyporenko")
+                            email.set("bnechyporenko@digital.ai")
                         }
-                        usage("java-runtime") {
-                            fromResolutionResult()
-                        }
+                    }
+                }
+                versionMapping {
+                    usage("java-api") {
+                        fromResolutionOf("runtimeClasspath")
+                    }
+                    usage("java-runtime") {
+                        fromResolutionResult()
                     }
                 }
             }
@@ -115,7 +113,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
     }
 
     signing {
-        sign(publishing.publications["mavenJava"])
+        sign(publishing.publications["commitPlugin"])
     }
 
     nexusPublishing {
