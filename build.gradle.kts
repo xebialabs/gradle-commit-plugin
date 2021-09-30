@@ -7,14 +7,26 @@ plugins {
     id("com.adarshr.test-logger") version (PluginVersions.gradle_test_logger)
     id("idea")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
-    id("maven-publish")
     id("org.jlleitschuh.gradle.ktlint") version (PluginVersions.ktlint)
     id("nebula.release") version "15.3.1"
     id("signing")
 }
 
+group = PluginConstants.groupId
+project.defaultTasks = listOf("build")
+
+val releasedVersion = PluginConstants.getVersion()
+project.extra.set("releasedVersion", releasedVersion)
+
 repositories {
+    mavenLocal()
     gradlePluginPortal()
+    maven {
+        url = uri("https://plugins.gradle.org/m2/")
+    }
+    maven {
+        url = uri("https://oss.sonatype.org/service/local/repositories/releases/content")
+    }
 }
 
 idea {
@@ -45,35 +57,31 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
 }
 
-group = PluginConstants.groupId
-val releasedVersion = PluginConstants.getVersion()
-project.extra.set("releasedVersion", releasedVersion)
-
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
     project.logger.lifecycle("Running release for Sonartype")
 
     publishing {
         publications {
-            create<MavenPublication>("commitPlugin") {
+            register("mavenJava", MavenPublication::class) {
                 from(components["java"])
 
-                groupId = PluginConstants.groupId
-                artifactId = PluginConstants.artifactId
+                groupId = "com.xebialabs.gradle.plugins"
+                artifactId = "gradle-commit"
                 version = releasedVersion
 
                 pom {
                     name.set("Integration Server Gradle Plugin")
                     description.set("The easy way to get custom setup for Deploy up and running")
-                    url.set(PluginConstants.repositoryUrl)
+                    url.set("https://github.com/xebialabs/gradle-commit-plugin.git")
                     licenses {
                         license {
                             name.set("GPLv2 with Digital.ai FLOSS License Exception")
-                            url.set(PluginConstants.repositoryLicense)
+                            url.set("https://github.com/xebialabs/gradle-commit-plugin/blob/master/LICENSE")
                         }
                     }
 
                     scm {
-                        url.set(PluginConstants.repositoryScm)
+                        url.set("https://github.com/xebialabs/gradle-commit-plugin")
                     }
 
                     developers {
@@ -113,7 +121,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
     }
 
     signing {
-        sign(publishing.publications["commitPlugin"])
+        sign(publishing.publications["mavenJava"])
     }
 
     nexusPublishing {
