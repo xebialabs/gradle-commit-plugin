@@ -14,8 +14,10 @@ object PluginConstants {
     const val artifactId = "gradle-commit"
     const val description = "Gradle plugin which helps to commit & push changes to Git repository"
     const val displayName = "Gradle Git Commit Plugin"
-    const val groupId = "ai.digital.gradle.plugins"
-    const val repositoryUrl = "https://github.com/acierto/gradle-commit"
+    const val groupId = "com.xebialabs.gradle.plugins"
+    const val repositoryScm = "https://github.com/xebialabs/gradle-commit-plugin"
+    const val repositoryLicense = "${repositoryScm}/blob/master/LICENSE"
+    const val repositoryUrl = "${repositoryScm}.git"
 
     fun getVersion(): String {
         return "1.0.0-${LocalDateTime.now().format(DateTimeFormatter.ofPattern("Mdd.Hmm"))}"

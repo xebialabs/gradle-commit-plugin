@@ -3,9 +3,11 @@ plugins {
     `maven-publish`
     kotlin("jvm") version (Versions.kotlin)
 
-    id("idea")
-    id("org.jlleitschuh.gradle.ktlint") version (PluginVersions.ktlint)
     id("com.adarshr.test-logger") version (PluginVersions.gradle_test_logger)
+    id("idea")
+    id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version (PluginVersions.ktlint)
+    id("signing")
 }
 
 repositories {
@@ -28,23 +30,23 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
             register("mavenJava", MavenPublication::class) {
                 from(components["java"])
 
-                groupId = "com.xebialabs.gradle.plugins"
-                artifactId = "integration-server-gradle-plugin"
+                groupId = PluginConstants.groupId
+                artifactId = PluginConstants.artifactId
                 version = version
 
                 pom {
                     name.set("Integration Server Gradle Plugin")
                     description.set("The easy way to get custom setup for Deploy up and running")
-                    url.set("https://github.com/xebialabs/integration-server-gradle-plugin.git")
+                    url.set(PluginConstants.repositoryUrl)
                     licenses {
                         license {
                             name.set("GPLv2 with Digital.ai FLOSS License Exception")
-                            url.set("https://github.com/xebialabs/integration-server-gradle-plugin/blob/master/LICENSE")
+                            url.set(PluginConstants.repositoryLicense)
                         }
                     }
 
                     scm {
-                        url.set("https://github.com/xebialabs/integration-server-gradle-plugin")
+                        url.set(PluginConstants.repositoryScm)
                     }
 
                     developers {
@@ -98,33 +100,34 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
         }
     }
 } else {
-    project.afterEvaluate {
-        publishing {
-            publications {
-                create<MavenPublication>("mavenPublish") {
-                    groupId = PluginConstants.groupId
-                    artifactId = PluginConstants.artifactId
-                    version = version
-
-                    pom {
-                        name.set(PluginConstants.displayName)
-                        description.set(PluginConstants.description)
-                        inceptionYear.set("2020")
-                        url.set(PluginConstants.repositoryUrl)
-                        developers {
-                            developer {
-                                name.set("Bogdan Nechyporenko")
-                                id.set("acierto")
-                            }
-                        }
-                        licenses {
-                            license {
-                                name.set("MIT")
-                                url.set("https://opensource.org/licenses/MIT")
-                            }
-                        }
-                    }
+    publishing {
+        publications {
+            create<MavenPublication>("myLibrary") {
+                from(components["java"])
+            }
+        }
+        repositories {
+            maven {
+                url = uri("${project.property("nexusBaseUrl")}/repositories/releases")
+                credentials {
+                    username = project.property("nexusUserName").toString()
+                    password = project.property("nexusPassword").toString()
                 }
+            }
+        }
+    }
+}
+
+if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
+    signing {
+        sign(publishing.publications["mavenJava"])
+    }
+
+    nexusPublishing {
+        repositories {
+            sonatype {
+                username.set(project.property("sonatypeUsername").toString())
+                password.set(project.property("sonatypePassword").toString())
             }
         }
     }
