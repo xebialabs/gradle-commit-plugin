@@ -6,6 +6,7 @@ plugins {
     id("com.adarshr.test-logger") version (PluginVersions.gradle_test_logger)
     id("idea")
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
+    id("maven-publish")
     id("org.jlleitschuh.gradle.ktlint") version (PluginVersions.ktlint)
     id("nebula.release") version "15.3.1"
     id("signing")
@@ -15,11 +16,27 @@ repositories {
     gradlePluginPortal()
 }
 
+idea {
+    module {
+        setDownloadJavadoc(true)
+        setDownloadSources(true)
+    }
+}
+
 dependencies {
     implementation(gradleKotlinDsl())
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
     implementation("org.jetbrains.kotlin:kotlin-allopen:${Versions.kotlin}")
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.named<Test>("test") {
+    useJUnitPlatform()
 }
 
 group = PluginConstants.groupId
@@ -34,7 +51,7 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("public")) {
 
                 groupId = PluginConstants.groupId
                 artifactId = PluginConstants.artifactId
-                version = version
+                version = releasedVersion
 
                 pom {
                     name.set("Integration Server Gradle Plugin")
@@ -140,6 +157,6 @@ tasks {
 
     register("dumpVersion") {
         file(buildDir).mkdirs()
-        file("$buildDir/version.dump").writeText("version=$project.version")
+        file("$buildDir/version.dump").writeText("version=$releasedVersion")
     }
 }
