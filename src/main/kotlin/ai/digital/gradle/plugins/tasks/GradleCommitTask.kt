@@ -31,7 +31,7 @@ abstract class GradleCommitTask : DefaultTask() {
         executeCommand(
             """
             if [ -n "$(git status --porcelain)" ]; then
-                git add ${fileContent.get()} && git commit -m "${message.get()}" 
+                git add -A ${fileContent.get()} && git commit -m "${message.get()}" 
             fi
         """.trimMargin()
         )
